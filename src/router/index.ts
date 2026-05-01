@@ -19,6 +19,7 @@ const router = createRouter({
         { path: 'development', component: () => import('../views/Development.vue') },
         { path: 'timeline', component: () => import('../views/Timeline.vue') },
         { path: 'training/:id', component: () => import('../views/TrainingDetail.vue') },
+        { path: 'match/:id', component: () => import('../views/MatchDetail.vue') },
       ]
     }
   ]
