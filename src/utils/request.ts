@@ -36,6 +36,8 @@ request.interceptors.response.use(
       window.location.href = '/login'
     } else if (status === 403) {
       ElMessage.error('无权操作')
+    } else if (status === 400) {
+      // 400 业务错误由调用方自己处理，不弹全局提示
     } else {
       ElMessage.error(message || '请求失败，请检查网络')
     }

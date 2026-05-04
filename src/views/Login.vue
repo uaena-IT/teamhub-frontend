@@ -48,7 +48,8 @@
       ElMessage.success('登录成功')
       router.push('/')
     } catch (e: any) {
-      ElMessage.error('用户名或密码错误')
+      const msg = e.response?.data?.message || '登录失败，请稍后重试'
+      ElMessage.error(msg)
     }
   }
 

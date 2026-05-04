@@ -12,6 +12,7 @@
             <span v-if="player.position"> · {{ player.position }}</span>
           </div>
           <el-tag style="margin-top:8px">{{ calcGrade(player.entryYear, player.degree) }}</el-tag>
+          <el-tag v-if="player.role === 'CAPTAIN'" type="danger" style="margin-top:8px;margin-left:8px">队长</el-tag>
           <el-tag v-if="player.status === 'ALUMNI'" type="info" style="margin-top:8px;margin-left:8px">功勋人物</el-tag>
         </div>
       </div>
