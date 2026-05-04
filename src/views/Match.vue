@@ -6,7 +6,7 @@
     </div>
 
     <!-- 筛选 -->
-    <el-radio-group v-model="filterType" style="margin-bottom:16px" @change="loadList">
+    <el-radio-group v-model="filterType" style="margin-bottom:16px;display:flex;flex-wrap:nowrap;overflow-x:auto" @change="loadList">
       <el-radio-button value="">全部</el-radio-button>
       <el-radio-button value="训练赛">训练赛</el-radio-button>
       <el-radio-button value="新生杯">新生杯</el-radio-button>
@@ -54,7 +54,10 @@
           <el-input v-model="form.lineup" type="textarea" :rows="3" placeholder="每行一人，如：1号 张三 主攻" />
         </el-form-item>
         <el-form-item label="备注">
-          <el-input v-model="form.notes" type="textarea" :rows="2" />
+          <el-input v-model="form.notes" type="textarea" :rows="2" placeholder="赛后总结、反思等" />
+        </el-form-item>
+        <el-form-item label="视频链接">
+          <el-input v-model="form.videoUrl" placeholder="网盘/B站/抖音等分享链接" />
         </el-form-item>
 
         <!-- 动态比分 -->
@@ -80,7 +83,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import request from '../utils/request'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -97,19 +100,19 @@ const form = reactive({
   lineup: '',
   notes: '',
   videoUrl: '',
-  createdBy: user.id,
+  createdBy: null,
   sets: [{ ourScore: 0, oppScore: 0 }]
 })
 
 async function loadList() {
-  const res = await axios.get('http://localhost:8080/api/match/list', {
+  const res = await request.get('/api/match/list', {
     params: { gameType: filterType.value }
   })
   matches.value = res.data
 }
 
 async function handleCreate() {
-  await axios.post('http://localhost:8080/api/match/create', form)
+  await request.post('/api/match/create', form)
   ElMessage.success('创建成功')
   showCreate.value = false
   loadList()

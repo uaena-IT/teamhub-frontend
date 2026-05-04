@@ -7,12 +7,21 @@
 
     <!-- 训练列表 -->
     <el-card v-for="t in trainings" :key="t.id" style="margin-bottom:12px;cursor:pointer" @click="goDetail(t.id)">
-      <div style="display:flex;justify-content:space-between">
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div style="font-size:16px;font-weight:bold">{{ t.title }}</div>
+          <div style="font-size:16px;font-weight:bold">
+            {{ t.title }}
+            <el-tag v-if="t.isFinished" type="info" size="small" effect="plain" style="margin-left:6px">已结束</el-tag>
+          </div>
           <div style="color:#888;margin-top:4px">{{ t.location }} · {{ formatTime(t.trainTime) }}</div>
         </div>
-        <el-tag>查看详情</el-tag>
+        <div style="display:flex;gap:8px;align-items:center">
+          <el-tag v-if="t.signupStatus === 'ATTEND'" type="success" size="small">已报名</el-tag>
+          <el-tag v-else-if="t.signupStatus === 'ABSENT'" type="danger" size="small">请假</el-tag>
+          <el-tag v-else-if="t.signupStatus === 'PENDING'" type="warning" size="small">待定</el-tag>
+          <el-tag v-else type="info" size="small">未报名</el-tag>
+          <el-tag>查看详情</el-tag>
+        </div>
       </div>
     </el-card>
 
@@ -48,7 +57,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import request from '../utils/request'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -62,16 +71,16 @@ const form = reactive({
   trainTime: '',
   content: '',
   videoUrl: '',
-  createdBy: user.id
+  createdBy: null
 })
 
 async function loadList() {
-  const res = await axios.get('http://localhost:8080/api/training/list')
+  const res = await request.get('/api/training/list')
   trainings.value = res.data
 }
 
 async function handleCreate() {
-  await axios.post('http://localhost:8080/api/training/create', form)
+  await request.post('/api/training/create', form)
   ElMessage.success('发布成功')
   showCreate.value = false
   loadList()

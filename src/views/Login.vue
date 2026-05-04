@@ -12,6 +12,12 @@
           <el-form-item>
             <el-button type="primary" style="width:100%" @click="handleLogin">登录</el-button>
           </el-form-item>
+          <el-form-item>
+            <el-button link type="primary" style="width:100%" @click="goRegister">还没有账号？去注册</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button link type="info" style="width:100%" @click="goReset">忘记密码？</el-button>
+          </el-form-item>
         </el-form>
       </el-card>
     </div>
@@ -20,7 +26,7 @@
   <script setup lang="ts">
   import { reactive } from 'vue'
   import { useRouter } from 'vue-router'
-  import axios from 'axios'
+  import request from '../utils/request'
   import { ElMessage } from 'element-plus'
   
   const router = useRouter()
@@ -28,12 +34,29 @@
   
   async function handleLogin() {
     try {
-      const res = await axios.post('http://localhost:8080/api/user/login', form)
-      localStorage.setItem('user', JSON.stringify(res.data))
+      const res = await request.post('/api/user/login', form)
+      const token = res.data?.token
+      const user = res.data?.user
+      
+      if (!token || !user || !user.id) {
+        ElMessage.error('登录响应异常，请稍后重试')
+        return
+      }
+      
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify(user))
       ElMessage.success('登录成功')
       router.push('/')
     } catch (e: any) {
       ElMessage.error('用户名或密码错误')
     }
+  }
+
+  function goRegister() {
+    router.push('/register')
+  }
+
+  function goReset() {
+    router.push('/reset-password')
   }
   </script>
